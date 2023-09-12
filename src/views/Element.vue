@@ -129,7 +129,29 @@
                 </el-table-column>
             </el-table>
         </el-row>
+        <el-menu router style="border:none;" :default-active="$route.path">
+          <el-menu-item index="/">
+            <template slot="title">
+              <i class="el-icon-menu"></i>
+              <span>Information Management</span>
+            </template>
+          </el-menu-item>
+          <el-menu-item index="/Element" >Element</el-menu-item>
+          <el-menu-item>Menu 3</el-menu-item>
+          <el-menu-item>Menu 4</el-menu-item>
+          <el-menu-item>Menu 5</el-menu-item>
+          <el-menu-item>Menu 6</el-menu-item>
+          <el-submenu>
+            <template slot="title">
+              <i class="el-icon-menu"></i>
+              <span>Information Management</span>
+            </template>
+            <el-menu-item index="/">User Information</el-menu-item>
+          </el-submenu>
+        </el-menu>
     </div>
+
+   
 </template>
 
 <script>
