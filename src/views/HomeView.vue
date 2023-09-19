@@ -19,6 +19,11 @@
             <span slot="title">Dashboard</span>
           </el-menu-item>
 
+          <el-menu-item index="/Form">
+            <i class="el-icon-menu"></i>
+            <span slot="title">Form</span>
+          </el-menu-item>
+
           <el-submenu>
             <template slot="title">
               <i class="el-icon-house"></i>
@@ -57,7 +62,7 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>Personal Information</el-dropdown-item>
                 <el-dropdown-item>Settings</el-dropdown-item>
-                <el-dropdown-item>Logout</el-dropdown-item>
+                <el-dropdown-item @click.native="logout">Logout</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
 
@@ -65,7 +70,38 @@
         </el-header>
         <!-- main section  -->
         <el-main>
+          <div style="display: flex; ">
+            <el-card style="width: 50%; margin-right: 10px;">
+              <div class="clearfix" slot="header">
+                <span>Buttons</span>
+              </div>
+              <div>
+                <div style="margin-top: 20px;">
+                  <div style="margin: 10px 0;"><strong>Theme color</strong></div>
+                  <el-button type="primary">Button</el-button>
+                  <el-button type="success">Button</el-button>
+                  <el-button type="warning">Button</el-button>
+                  <el-button type="danger">Button</el-button>
+                  <el-button type="info">Button</el-button>
+                </div>
+              </div>
+            </el-card>
 
+            <el-card style="width: 50%;">
+              <div class="clearfix" slot="header">
+                <span>User Information</span>
+                <div>
+                  <el-table :data="users">
+                    <el-table-column label="Id" prop="id"></el-table-column>
+                    <el-table-column label="Username" prop="username"></el-table-column>
+                    <el-table-column label="Name" prop="name"></el-table-column>
+                    <el-table-column label="Address" prop="address"></el-table-column>
+
+                  </el-table>
+                </div>
+              </div>
+            </el-card>
+          </div>
         </el-main>
       </el-container>
     </el-container>
@@ -73,6 +109,8 @@
 </template>
 
 <script>
+// import axios from 'axios';
+import request from '@/utils/request';
 
 export default {
   name: 'HomeView',
@@ -86,7 +124,25 @@ export default {
       iconFullScreen: 'fa-solid fa-maximize',
       isFullScreen: false,
       // <i class="fa-solid fa-minimize"></i>
+      users: [
+        {
+          "id": '',
+          "username": '',
+          "name": '',
+          "address": ''
+        }
+      ],
     }
+  },
+  mounted() {
+    // axios.get('http://localhost:9090/user/selectAll').then(res => {
+    //   this.users = res.data.data
+
+    // })
+
+    request.get('/user/selectAll').then(res => {
+      this.users = res.data
+    })
   },
   methods: {
     handleCollapse() {
@@ -98,13 +154,15 @@ export default {
       if (!this.isFullScreen) {
         document.documentElement.requestFullscreen()
         this.isFullScreen = true
-
       } else {
         document.exitFullscreen()
         this.isFullScreen = false
-
       }
       this.iconFullScreen = this.isFullScreen ? 'fa-solid fa-minimize' : 'fa-solid fa-maximize'
+    },
+    logout(){
+      localStorage.removeItem('honey-user')
+      this.$router.push('/login')
     }
   }
 }
