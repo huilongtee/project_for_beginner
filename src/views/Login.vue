@@ -1,10 +1,14 @@
 <template>
-    <div style="height: 100vh; display: flex; justify-content: center; align-items: center; background-color: rgb(127, 208, 255);">
+    <div
+        style="height: 100vh; display: flex; justify-content: center; align-items: center; background-color: rgb(127, 208, 255);">
         <div style="display: flex; background-color: #fff; width: 50%; border-radius: 10px; overflow: hidden;">
             <div style="flex: 1;">
                 <img src="@/assets/login.jpg" style="width: 100%;" alt="">
             </div>
             <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
+
+
+
                 <el-form :rules="rules" ref="loginRef" :model="user" style="width: 80%;">
                     <div style="font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 20px;">Welcome to
                         Administrator System
@@ -20,8 +24,8 @@
                     </el-form-item>
                     <el-form-item prop="code">
                         <div style="display: flex;">
-                            <el-input placeholder="Please enter validation code" v-model="user.code" prefix-icon="el-icon-circle-check" size="medium"
-                                style="flex: 1;"></el-input>
+                            <el-input placeholder="Please enter validation code" v-model="user.code"
+                                prefix-icon="el-icon-circle-check" size="medium" style="flex: 1;"></el-input>
                             <div style="flex: 1; height: 36px;">
                                 <valid-code @update:value="getCode" />
                             </div>
@@ -31,13 +35,32 @@
                         <el-button type="primary" style="width: 100%;" @click="login">Login</el-button>
                     </el-form-item>
                     <div style="display: flex;">
-                        <div style="flex: 1;">Doesn't have an account? <span style="color: #0f9876; cursor: pointer;" @click="$router.push('/Register')">Click Here</span>
+                        <div style="flex: 1;">Doesn't have an account? <span style="color: #0f9876; cursor: pointer;"
+                                @click="$router.push('/Register')">Click Here</span>
                         </div>
-                        <div style="flex: 1; text-align: right;"><span style="color: #0f9876; ">Forget Password</span></div>
+                        <div style="flex: 1; text-align: right;"><span style="color: #0f9876; cursor: pointer;"
+                                @click="handleForgetPassword">Forget Password</span></div>
                     </div>
                 </el-form>
             </div>
         </div>
+
+        <el-dialog title="Forget Password" :visible.sync="forgetPassDialogVis">
+            <el-form :model="forgetPassForm" :rules="forgetPassRules" ref="forgetPassRef">
+                <el-form-item label="Username" prop="username">
+                    <el-input v-model="forgetPassForm.username" aria-autocomplete="false"
+                        aria-placeholder="Please enter your username"></el-input>
+                </el-form-item>
+                <el-form-item label="Phone" prop="phone">
+                    <el-input v-model="forgetPassForm.phone" aria-autocomplete="false"
+                        aria-placeholder="Please enter your phone"></el-input>
+                </el-form-item>
+            </el-form>
+            <div class="dialog-footer" slot="footer">
+                <el-button type="danger" @click="forgetPassDialogVis = false">Cancel</el-button>
+                <el-button type="primary" @click="resetPassword">Reset</el-button>
+            </div>
+        </el-dialog>
 
     </div>
 </template>
@@ -67,6 +90,11 @@ export default {
         }
 
         return {
+            forgetPassForm: {
+                username: '',
+                phone: '',
+            },
+            forgetPassDialogVis: false,
             code: '',//code from validCode component
             user: {
                 username: '',
@@ -85,6 +113,17 @@ export default {
 
                 ],
                 code: [{ validator: validateCode, trigger: 'blur' }]
+            },
+            forgetPassRules: {
+                username: [
+                    { required: true, message: 'Please enter your username', trigger: 'blur' },
+
+                ],
+
+                phone: [
+                    { required: true, message: 'Please enter your phone', trigger: 'blur' },
+
+                ],
             },
         }
     },
@@ -121,6 +160,28 @@ export default {
             console.log(code)
             this.code = code.toLowerCase()
             console.log(this.code)
+        },
+        resetPassword() {
+            this.$refs['forgetPassRef'].validate((valid) => {
+                if (valid) {
+                    //success in validtion
+                    this.$request.put('/password', this.forgetPassForm).then(res => {
+                        console.log(res)
+                        console.log(res.code)
+                        if (res.code === '200') {
+                            this.$message.success("Password reset Successfully")
+                            localStorage.setItem('honey-user', JSON.stringify(res.data))
+                            this.forgetPassDialogVis = false
+                        } else {
+                            this.$message.error(res.message)
+                        }
+                    })
+                }
+            })
+        },
+        handleForgetPassword() {
+            this.forgetPassForm = {}
+            this.forgetPassDialogVis = true
         }
     }
 }

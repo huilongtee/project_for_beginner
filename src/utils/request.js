@@ -19,7 +19,7 @@ request.interceptors.request.use(config => {
 
     config.headers['token']=user.token
 
-    return config
+    return config;
 }, error => {
     console.log("request error:" + error)
     return Promise.reject(error)
@@ -40,7 +40,7 @@ request.interceptors.response.use(
         if(res.code==='401'){
             router.push('/login')
         }
-        return res
+        return res;
     },
     error => {
         console.log("request error:" + error)

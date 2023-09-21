@@ -23,6 +23,13 @@
                         <el-input prefix-icon="el-icon-lock" size="medium" show-password v-model="user.confirmationPassword"
                             placeholder="Please enter your confirmation password"></el-input>
                     </el-form-item>
+                    <el-form-item prop="role">
+                        <el-radio-group v-model="user.role">
+<el-radio label="User"></el-radio>
+<el-radio label="Business"></el-radio>
+                        </el-radio-group>
+                        
+                    </el-form-item>
                     <el-form-item>
                         <el-button type="info" style="width: 100%;" @click="register">Register</el-button>
                     </el-form-item>
@@ -62,7 +69,8 @@ export default {
             user: {
                 username: '',
                 password: '',
-                confirmationPassword: ''
+                confirmationPassword: '',
+                role: '',
             },
             rules: {
                 username: [
@@ -71,7 +79,10 @@ export default {
                 password: [
                     { required: true, message: 'Please enter your password', trigger: 'blur' },
                 ],
-                confirmationPassword: [{ validator: validatePassword, trigger: 'blur' }]
+                confirmationPassword: [{ validator: validatePassword, trigger: 'blur' }],
+                role: [
+                    { required: true, message: 'Please select your user role', trigger: 'blur' },
+                ],
             },
         }
     },
@@ -85,7 +96,8 @@ export default {
                 if (valid) {
                     //success in validtion
                     this.$request.post('/register', this.user).then(res => {
-
+                        console.log(res)
+                        console.log(res.code)
                         if (res.code === '200') {
                             this.$router.push('/')
                             this.$message.success("Register Successfully")
