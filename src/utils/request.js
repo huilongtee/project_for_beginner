@@ -19,7 +19,7 @@ request.interceptors.request.use(config => {
 
     config.headers['token']=user.token
 
-    return config;
+    return config
 }, error => {
     console.log("request error:" + error)
     return Promise.reject(error)
