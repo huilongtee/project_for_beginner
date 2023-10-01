@@ -9,11 +9,12 @@ import Home from '../views/manager/Home.vue'
 import User from '../views/manager/User.vue'
 import Person from '../views/manager/Person.vue'
 import Password from '../views/manager/Password.vue'
+import News from '../views/manager/News.vue'
 import PageNotFound from '../views/404.vue'
 
 
 //to prevent the error of clicking the menu rapidly
-// and to preven the error of click redundant path/same location
+// and to prevent the error of click redundant path/same location
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
@@ -34,6 +35,7 @@ const routes = [
       { path: 'element', name: 'Element', component: Element, meta: { name: 'Element' } },
       { path: 'person', name: 'Person', component: Person, meta: { name: 'Person' } },
       { path: 'password', name: 'Password', component: Password, meta: { name: 'Password' } },
+      { path: 'news', name: 'News', component: News, meta: { name: 'News' } },
 
     ],
   },

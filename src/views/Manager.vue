@@ -12,7 +12,7 @@
           </transition>
 
         </div>
-        <el-menu :collapseTransition="false" :collapse="isCollapse" router background-color="#001529"
+        <el-menu :default-openeds="['info']" :collapseTransition="false" :collapse="isCollapse" router background-color="#001529"
           text-color="rgba(255,255,255,0.65)" active-text-color="#fff" style="border:none;" :default-active="$route.path">
           <el-menu-item index="/home">
             <i class="el-icon-s-home"></i>
@@ -26,6 +26,7 @@
             </template>
             <el-menu-item index="/user">User</el-menu-item>
             <el-menu-item index="/element">Element</el-menu-item>
+            <el-menu-item index="/news">News</el-menu-item>
           </el-submenu>
 
 

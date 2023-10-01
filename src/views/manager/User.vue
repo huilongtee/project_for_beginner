@@ -10,6 +10,10 @@
         <div style=" margin-bottom: 10px;">
             <el-button type="primary" plain @click="handleAddUser">Add</el-button>
             <el-button type="danger" plain @click="handleDeleteBatch">Batch Delete</el-button>
+            <el-button type="info" plain @click="exportData">Export Data</el-button>
+            <el-upload action="http://localhost:9090/user/import" :headers="{ token: currentUser.token }"
+                :show-file-list="false" :on-success="handleImport"><el-button type="primary" plain>Batch
+                    import</el-button></el-upload>
         </div>
         <el-table @selection-change="handleSelectionChange" :data="users" stripe
             :header-cell-style="{ background: 'aliceblue', color: '#555' }">
@@ -40,7 +44,7 @@
             </el-table-column>
         </el-table>
         <div class="block" style="margin-top: 10px;">
-            <el-pagination @current-change="handleCurrentChange" :current-page.sync="pageNum"
+            <el-pagination @current-change="handleCurrentChange"  @size-change="handleSizeChange" :current-page.sync="pageNum"
                 :page-sizes="[5, 10, 20, 50, 100]" :page-size="pageSize" layout="total,sizes, prev, pager, next"
                 :total="total">
             </el-pagination>
@@ -161,6 +165,30 @@ export default {
 
     },
     methods: {
+        handleSizeChange(val) {
+        this.pageSize=val
+        this.load()
+      },
+        handleImport(res, file, fileList) {
+            console.log(res, file, fileList)
+            if (res.code === '200') {
+                this.$message.success('Import successfully')
+                this.load()
+            } else {
+                this.$message.error('Import failed')
+            }
+        },
+        exportData() {
+            if (!this.multipleSelection.length) { //not choosing any user in the table, export all or export based on the searching term
+                //must include seraching term into the link
+                window.open('http://localhost:9090/user/export?username=' + this.username + '&name=' + this.name + '&token=' + this.currentUser.token)
+
+
+            } else {
+                let idStr = this.multipleSelection.join(',')
+                window.open('http://localhost:9090/user/export?token=' + this.currentUser.token + '&ids=' + idStr)
+            }
+        },
         handleDeleteBatch() {
             if (!this.multipleSelection.length) {
                 this.$message.warning('Please select at least one user')
@@ -226,6 +254,7 @@ export default {
         },
         handleCurrentChange(pageNum) {
             this.load(pageNum)
+            
         },
         load(pageNum) {
             if (pageNum) this.pageNum = pageNum
@@ -243,6 +272,7 @@ export default {
                 this.total = res.data.total
             })
         },
+        
         reset() {
             this.username = ''
             this.name = ''
